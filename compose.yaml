@@ -1,0 +1,51 @@
+name: wp
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./templates/wp.conf:/etc/nginx/conf.d/00-wp.conf
+      - data:/var/www/html
+    ports:
+      - 8080:80
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+
+  wordpress:
+    image: wordpress:fpm-alpine
+    build: # Docker wasn't recognizing the .ini file on the volumes, so I had to make a Dockerfile just to copy it
+      context: .
+      dockerfile: Dockerfile.wordpress
+    volumes:
+      - data:/var/www/html
+    depends_on:
+      - mariadb
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: db-[REEMPLAZAR!!!!!]
+      WORDPRESS_DB_USER: usr-[REEMPLAZAR!!!!!]
+      WORDPRESS_DB_PASSWORD: pwd-[REEMPLAZAR!!!!!]
+      WORDPRESS_CONFIG_EXTRA: define('WP_MEMORY_LIMIT', '3000M');
+    restart: unless-stopped
+
+  mariadb:
+    restart: unless-stopped
+    image: mariadb
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      # MYSQL_ROOT_PASSWORD: TestRootPassword
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_DATABASE: db-[REEMPLAZAR!!!!!]
+      MYSQL_USER: usr-[REEMPLAZAR!!!!!]
+      MYSQL_PASSWORD: pwd-[REEMPLAZAR!!!!!]
+
+  # adminer:
+  #   image: adminer
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8081:8080
+
+volumes:
+  db-data:
+  data:

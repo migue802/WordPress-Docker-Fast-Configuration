@@ -1,0 +1,2 @@
+FROM nginx:alpine
+COPY ./templates/wp.conf /etc/nginx/conf.d/00-wp.conf

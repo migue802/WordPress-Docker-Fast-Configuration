@@ -1,3 +1,2 @@
-# Manually copy the .ini file as Docker Volumes wouldn't detect the file
 FROM wordpress:fpm-alpine
 COPY conf/gigabit-upload.ini /usr/local/etc/php/conf.d/gigabit-upload.ini
